@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x_nc=#p13ug&8*8^_$l+ml_#$m)74v-^5(_!)@_6z%ls58yh1k'
+SECRET_KEY = os.getenv("SECRET_KEY",'django-insecure-x_nc=#p13ug&8*8^_$l+ml_#$m)74v-^5(_!)@_6z%ls58yh1k')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.getenv("DEBUG", 1))
 
 ALLOWED_HOSTS = []
 
@@ -37,6 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #### THIRD PARTY LIBS
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "drf_yasg",
+    'django_cleanup.apps.CleanupConfig',
+    "corsheaders",
+
+    #### PROJECT APPS
+    "products",
+    "cart",
 ]
 
 MIDDLEWARE = [
@@ -75,11 +86,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('DB_NAME', "shop_dulat"),
+        'HOST': os.getenv('PG_HOST', "localhost"),
+        'PORT': os.getenv('PG_PORT', "5432"),
+        'USER': os.getenv('PG_USER', "commonuser"),
+        'PASSWORD': os.getenv('PG_PASSWORD', "ASDZXC123"),
+    },
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -121,3 +135,21 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
+    }
+}
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.AllowAny",
+        # "rest_framework.permissions.IsAuthenticated",
+    )
+
+}

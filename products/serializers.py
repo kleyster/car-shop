@@ -1,4 +1,3 @@
-from .models import CarCategory, Category, Products
 from rest_framework import serializers
 
 

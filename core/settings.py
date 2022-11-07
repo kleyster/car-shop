@@ -87,11 +87,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME', "shop_dulat"),
-        'HOST': os.getenv('PG_HOST', "localhost"),
-        'PORT': os.getenv('PG_PORT', "5432"),
-        'USER': os.getenv('PG_USER', "commonuser"),
-        'PASSWORD': os.getenv('PG_PASSWORD', "ASDZXC123"),
+        'NAME': os.getenv('POSTGRES_DB', "shop_dulat"),
+        'HOST': "app-db",
+        'PORT': "5432",
+        'USER': os.getenv('POSTGRES_USER', "commonuser"),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', "ASDZXC123"),
     },
 }
 

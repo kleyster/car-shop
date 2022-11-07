@@ -37,7 +37,7 @@ class ProductRetrieveView(GenericAPIView):
     serializer_class = ProductSerializer
 
     def get(self, request, pk):
-        queryset = self.get_queryset().get(id=id)
+        queryset = self.get_queryset().get(id=pk)
         serializer = self.serializer_class(queryset)
         return Response(serializer.data
                         )

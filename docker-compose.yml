@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+
+  web:
+    restart: always
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8003:8000"
+    depends_on:
+      - app-db
+    networks:
+      - external-web
+      - common-net
+    command: sh ./entrypoint.sh
+
+  app-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    networks:
+      - common-net
+
+
+networks:
+  common-net:
+    driver: bridge
+  external-web:
+    external: true

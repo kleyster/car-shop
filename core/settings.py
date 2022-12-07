@@ -153,3 +153,22 @@ REST_FRAMEWORK = {
     )
 
 }
+
+AUTH_USER_MODEL = "_auth.Users"
+
+REDIS_HOST = os.getenv("REDIS_HOST")
+REDIS_PORT = os.getenv("REDIS_PORT")
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"{REDIS_HOST}:{REDIS_PORT}/",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": REDIS_PASSWORD
+        }
+    }
+}
+
+CACHE_TTL = os.getenv("CACHE_TTL")

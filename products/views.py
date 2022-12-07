@@ -10,14 +10,26 @@ class CategoryView(ListAPIView):
     serializer_class = CategorySerializer
 
     def get(self, request, pk):
-        queryset = self.get_queryset().filter(car_category=pk)
-        serializer = self.serializer_class(queryset,many=True)
+        queryset = self.get_queryset().filter(car_type=pk)
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
+
 
 class CarCategoryView(ListAPIView):
 
     queryset = CarCategory.objects.all()
     serializer_class = CarCategorySerializer
+
+
+class CarTypeView(ListAPIView):
+
+    queryset = CarType.objects.all()
+    serializer_class = NameSerializer
+
+    def get(self, request, pk):
+        queryset = self.get_queryset().filter(car_category=pk)
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializer.data)
 
 
 class ProductsListView(ListAPIView):

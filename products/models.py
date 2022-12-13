@@ -20,7 +20,8 @@ class Category(models.Model):
 
 class Products(models.Model):
     name = models.TextField()
-    car_type = models.ForeignKey(CarType, related_name="car_types", on_delete=models.CASCADE, null=True)
+    car_type = models.ForeignKey(CarType, related_name="products", on_delete=models.CASCADE, null=True)
+    car_category = models.ForeignKey(CarCategory, related_name="product", on_delete=models.CASCADE, null=True)
     brand = models.CharField(max_length=100)
     year = models.SmallIntegerField()
     price = models.IntegerField()
@@ -28,6 +29,10 @@ class Products(models.Model):
     category = models.ForeignKey(Category, related_name="products", on_delete=models.SET_NULL, null=True)
     can_order = models.BooleanField(default=False)
     product_code = models.CharField(max_length=20)
+
+    def save(self, *args, **kwargs):
+        self.car_category = self.car_type.car_category
+        super(Products, self).save(*args, **kwargs)
 
 
 class ProductImages(models.Model):

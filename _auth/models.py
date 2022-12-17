@@ -1,6 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, User, UserManager
+from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.contrib.auth.hashers import make_password
+from django.utils.translation import gettext_lazy as _
 
 
 class CustomUserManager(UserManager):
@@ -43,6 +44,26 @@ class Users(AbstractBaseUser):
     last_name = models.CharField(max_length=60, null=True)
     image = models.ImageField(upload_to="user/icons/", null=True)
     address = models.TextField(null=True)
+    is_staff = models.BooleanField(
+        _("staff status"),
+        default=False,
+        help_text=_("Designates whether the user can log into this admin site."),
+    )
+    is_active = models.BooleanField(
+        _("active"),
+        default=True,
+        help_text=_(
+            "Designates whether this user should be treated as active. "
+            "Unselect this instead of deleting accounts."
+        ),
+    )
+    is_superuser = models.BooleanField(
+        _("staff status"),
+        default=False,
+        help_text=_("Designates whether the user can log into this admin site."),
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     REQUIRED_FIELDS = []
     USERNAME_FIELD = "email"

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, User
+from django.contrib.auth.models import AbstractBaseUser, User, UserManager
 
 
 class Users(AbstractBaseUser):
@@ -11,4 +11,6 @@ class Users(AbstractBaseUser):
     image = models.ImageField(upload_to="user/icons/", null=True)
     address = models.TextField(null=True)
 
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = []
+    USERNAME_FIELD = "email"
+    objects = UserManager()

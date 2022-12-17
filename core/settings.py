@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv("SECRET_KEY",'django-insecure-x_nc=#p13ug&8*8^_$l+ml_#$m)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.getenv("DEBUG", 1))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     #### PROJECT APPS
     "products",
     "cart",
+    "_auth"
 ]
 
 MIDDLEWARE = [
@@ -160,15 +161,15 @@ REDIS_HOST = os.getenv("REDIS_HOST")
 REDIS_PORT = os.getenv("REDIS_PORT")
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"{REDIS_HOST}:{REDIS_PORT}/",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": REDIS_PASSWORD
-        }
-    }
-}
+#CACHES = {
+#    "default": {
+#        "BACKEND": "django_redis.cache.RedisCache",
+#        "LOCATION": f"{REDIS_HOST}:{REDIS_PORT}/",
+#        "OPTIONS": {
+#            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#            "PASSWORD": REDIS_PASSWORD
+#        }
+#    }
+#}
 
 CACHE_TTL = os.getenv("CACHE_TTL")

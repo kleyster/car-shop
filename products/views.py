@@ -64,9 +64,10 @@ class ProductRetrieveView(GenericAPIView):
 class ProductFilterOptions(GenericAPIView):
 
     serializer_class = NameSerializer
+    queryset = Products.objects.all()
 
     def get(self, request, pk):
-        queryset = self.get_queryset().filter(category=pk)
+        queryset = self.get_queryset().filter(car_category=pk)
         serializer = self.serializer_class(queryset, many=True)
         options = {
             "brands": queryset.distinct("brand"),

@@ -7,7 +7,7 @@ class CarCategory(models.Model):
 
 
 class CarType(models.Model):
-    name = models.CharField(100)
+    name = models.CharField(max_length=100)
     car_category = models.ForeignKey(CarCategory, related_name="car_types", on_delete=models.CASCADE)
     image = models.ImageField()
 

@@ -7,4 +7,5 @@ urlpatterns = [
     path("categories/<int:pk>", CategoryView.as_view()),
     path("products/<int:pk>", ProductsListView.as_view()),
     path("product/<int:pk>", ProductRetrieveView.as_view()),
+    path("product/options/<int:pk>", ProductFilterOptions.as_view()),
 ]

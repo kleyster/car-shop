@@ -22,9 +22,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Kalkan API",
+        title="CAR SHOP API",
         default_version="v1",
-        description="Kalkan todo endpoints",
+        description="endpoints",
     ),
     public=True,
     permission_classes=[permissions.AllowAny],

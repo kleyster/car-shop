@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.contrib.auth.hashers import make_password
@@ -16,7 +18,7 @@ class CustomUserManager(UserManager):
         # managers are by definition working on the real model.
         user = self.model(email=email, **extra_fields)
         user.password = make_password(password)
-        user.save(using=self._db)
+        user.save()
         return user
 
     def create_user(self, email=None, password=None, **extra_fields):
@@ -38,7 +40,7 @@ class CustomUserManager(UserManager):
 
 class Users(AbstractBaseUser):
 
-    id = models.UUIDField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=60, null=True)
     last_name = models.CharField(max_length=60, null=True)
@@ -48,14 +50,6 @@ class Users(AbstractBaseUser):
         _("staff status"),
         default=False,
         help_text=_("Designates whether the user can log into this admin site."),
-    )
-    is_active = models.BooleanField(
-        _("active"),
-        default=True,
-        help_text=_(
-            "Designates whether this user should be treated as active. "
-            "Unselect this instead of deleting accounts."
-        ),
     )
     is_superuser = models.BooleanField(
         _("staff status"),

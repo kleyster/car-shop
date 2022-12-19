@@ -15,7 +15,7 @@ class CarType(models.Model):
 class Category(models.Model):
 
     name = models.CharField(max_length=150)
-    car_type = models.ManyToManyField(CarType, related_name="categories")
+    car_type = models.ManyToManyField(CarCategory, related_name="categories")
 
 
 class Products(models.Model):

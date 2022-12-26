@@ -13,8 +13,9 @@ class CarCategorySerializer(NameSerializer):
 
 class CategorySerializer(NameSerializer):
 
-    car_type = serializers.CharField(source="car_type.name")
-    catalog = serializers.CharField(source="car_type.car_category.name")
+    pass
+    # car_type = serializers.CharField(source="car_type.name")
+    # catalog = serializers.CharField(source="car_type.car_category.name")
 
 
 class ProductSerializer(serializers.Serializer):

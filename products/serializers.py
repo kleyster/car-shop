@@ -12,7 +12,9 @@ class CarCategorySerializer(NameSerializer):
 
 
 class CategorySerializer(NameSerializer):
-    pass
+
+    car_type = serializers.CharField(source="car_type.name")
+    catalog = serializers.CharField(source="car_type.car_category.name")
 
 
 class ProductSerializer(serializers.Serializer):

@@ -5,7 +5,7 @@ from products.models import Products
 from .models import Favourites, Cart
 from django.db.models import F
 from .serializers import CartSerializer
-
+from django.shortcuts import get_object_or_404
 
 class FavouritesView(APIView):
 
@@ -37,8 +37,16 @@ class CartProductAddView(APIView):
 
     def put(self,request, pk):
         product, created = Cart.objects.get_or_create(user=request.user, product_id=pk)
-        print(created)
         if not created:
             product.amount += F("amount")
             product.save()
+        return Response()
+    
+    def delete(self,request, pk):
+        product = get_object_or_404(Cart, user=request.user, product_id=pk)
+        if product.amount >1:
+            product.amount -= F("amount")
+            product.save()
+        else:
+            product.delete()
         return Response()

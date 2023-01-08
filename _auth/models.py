@@ -6,6 +6,16 @@ from django.contrib.auth.hashers import make_password
 from django.utils.translation import gettext_lazy as _
 
 
+class Company(models.Model):
+
+    name = models.CharField(max_length=200)
+    logo = models.ImageField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey('Users', related_name='companies', on_delete=models.PROTECT)
+    certificate = models.FileField(null=True)
+    description = models.TextField()
+
+
 class CustomUserManager(UserManager):
 
     def _create_user(self, email, password, **extra_fields):
@@ -45,6 +55,8 @@ class Users(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=60, null=True)
     image = models.ImageField(upload_to="user/icons/", null=True)
     address = models.TextField(null=True)
+    company = models.ForeignKey(Company, related_name='users', on_delete=models.SET_NULL,null=True)
+    is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,

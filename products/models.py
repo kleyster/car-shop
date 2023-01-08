@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.postgres.fields import JSONField, ArrayField
+from _auth.models import Company
 
 
 class CarCategory(models.Model):
@@ -20,15 +22,18 @@ class Category(models.Model):
 
 class Products(models.Model):
     name = models.TextField()
-    car_type = models.ForeignKey(CarType, related_name="products", on_delete=models.CASCADE, null=True)
+    car_type = models.ForeignKey(CarType, related_name="products", on_delete=models.CASCADE)
     car_category = models.ForeignKey(CarCategory, related_name="product", on_delete=models.CASCADE, null=True)
-    brand = models.CharField(max_length=100)
+    brand = models.ForeignKey(Company, related_name='products', on_delete=models.CASCADE)
     year = models.SmallIntegerField()
     price = models.IntegerField()
-    characteristics = models.CharField(max_length=100)
+    characteristics = ArrayField(models.JSONField())
     category = models.ForeignKey(Category, related_name="products", on_delete=models.SET_NULL, null=True)
     can_order = models.BooleanField(default=False)
     product_code = models.CharField(max_length=20)
+    certificate_in = models.FileField(null=True)
+    certificate = models.FileField(null=True)
+
 
     def save(self, *args, **kwargs):
         self.car_category = self.car_type.car_category

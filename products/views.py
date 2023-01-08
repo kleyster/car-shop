@@ -5,32 +5,10 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
 
-class CategoryView(ListAPIView):
-
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-    def get(self, request, pk):
-        queryset = self.get_queryset().filter(car_type=pk)
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data)
-
-
 class CarCategoryView(ListAPIView):
 
     queryset = CarCategory.objects.all()
     serializer_class = CarCategorySerializer
-
-
-class CarTypeView(ListAPIView):
-
-    queryset = CarType.objects.all()
-    serializer_class = NameSerializer
-
-    def get(self, request, pk):
-        queryset = self.get_queryset().filter(car_category=pk)
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data)
 
 
 class ProductsListView(ListAPIView):
@@ -78,3 +56,43 @@ class ProductFilterOptions(GenericAPIView):
             "car_type": queryset.distinct("car_type")
         }
         return Response(serializer.data)
+
+
+class AdminProductCreateView(GenericAPIView):
+
+    serializer_class = ProductSerializer
+    queryset = Products.objects.all()
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    
+    def get(self, request):
+        company = request.user.company
+        queryset = self.queryset.filter(brand_id=company.id)
+        serializer = self.serializer_class(queryset, many=True)
+        return Response(serializers.data)
+
+class AdminProductView(GenericAPIView):
+
+    serializer_class = ProductSerializer
+    queryset = Products.objects.all()
+
+    def get(self,request, pk):
+        queryset = self.queryset.get(pk=pk)
+        serializer = self.serializer_class(queryset)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        instance = self.queryset.get(pk=pk)
+        serializer = self.serializer_class(instance=instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    
+    def delete(self,request,pk):
+        instance = get_object_or_404(self.queryset, pk=pk)
+        instance.delete()
+        return Response()

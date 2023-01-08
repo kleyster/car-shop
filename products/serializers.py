@@ -1,5 +1,11 @@
 from rest_framework import serializers
+from .models import Products
 
+
+class ProductImageSerializer(serializers.Serializer):
+
+    id = serializers.IntegerField()
+    image = serializers.ImageField()
 
 class NameSerializer(serializers.Serializer):
 
@@ -7,9 +13,10 @@ class NameSerializer(serializers.Serializer):
     name = serializers.CharField()
 
 
-class CarCategorySerializer(NameSerializer):
-    pass
+class CarTypesSerializer(NameSerializer):
 
+    image = serializers.ImageField()
+    
 
 class CategorySerializer(NameSerializer):
 
@@ -18,11 +25,15 @@ class CategorySerializer(NameSerializer):
     # catalog = serializers.CharField(source="car_type.car_category.name")
 
 
-class ProductSerializer(serializers.Serializer):
+class CarCategorySerializer(NameSerializer):
+    
+    car_types = CarTypesSerializer(many=True)
 
-    id = serializers.IntegerField()
-    name = serializers.CharField()
-    year = serializers.IntegerField()
-    brand = serializers.CharField()
-    price = serializers.CharField()
-    characteristics = serializers.CharField()
+
+class ProductSerializer(serializers.ModelSerializer):
+
+    images = ProductImageSerializer(many=True)
+
+    class Meta:
+        model = Products
+        fields = "__all__"

@@ -31,9 +31,6 @@ class Products(models.Model):
     category = models.ForeignKey(Category, related_name="products", on_delete=models.SET_NULL, null=True)
     can_order = models.BooleanField(default=False)
     product_code = models.CharField(max_length=20)
-    certificate_in = models.FileField(null=True)
-    certificate = models.FileField(null=True)
-
 
     def save(self, *args, **kwargs):
         self.car_category = self.car_type.car_category

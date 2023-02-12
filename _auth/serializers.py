@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from _auth.models import Company
 
 
 class EmailValidator(serializers.Serializer):
@@ -9,7 +10,16 @@ class EmailValidator(serializers.Serializer):
 class UserSerializer(serializers.Serializer):
 
     email = serializers.EmailField()
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
-    address = serializers.CharField()
-    image = serializers.ImageField()
+    first_name = serializers.CharField(allow_null=True)
+    last_name = serializers.CharField(allow_null=True)
+    address = serializers.CharField(allow_null=True)
+    image = serializers.ImageField(allow_null=True)
+    password = serializers.CharField(write_only=True)
+
+
+class CompanySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Company
+        fields = ("id", "name", "logo", "certificate", "description")
+

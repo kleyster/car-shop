@@ -40,6 +40,8 @@ services:
       - 80:80
     depends_on:
       - web
+    networks:
+      - common-net
 
 networks:
   common-net:

@@ -11,6 +11,8 @@ services:
       - "8000:8000"
     depends_on:
       - app-db
+    volumes:
+      - ./media/:/shop/media/
     networks:
       - external-web
       - common-net
@@ -48,3 +50,4 @@ networks:
     driver: bridge
   external-web:
     external: true
+

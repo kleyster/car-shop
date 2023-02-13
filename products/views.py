@@ -3,6 +3,9 @@ from .serializers import *
 from .models import *
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from drf_yasg.utils import swagger_auto_schema
+from products.swagger_utils import CAR_TYPE_QUERY, CATEGORY_QUERY
 
 
 class CarCategoryView(ListAPIView):
@@ -11,17 +14,50 @@ class CarCategoryView(ListAPIView):
     serializer_class = CarCategorySerializer
 
 
+class ProductsImagesView(GenericAPIView):
+
+    queryset = ProductImages.objects.all()
+    serializer_class = ProductImageSerializer
+    permissions = [IsAdminUser,]
+    
+    def get(self, request, pk):
+        images = queryset.filter(product_id=pk)
+        serializer = self.serializer_class(images, many=True)
+        return Response(serializer.data)
+
+    def post (self, request, pk):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        image = ProductImages.objects.create(**serializer.validated_data)
+        return Response(self.serializer_class(image))
+
+
+class ProductImageView(GenericAPIView):
+    permissions = [IsAdminUser, ]
+
+    def delete(self, request, pk):
+        Product.images.filter(pk=pk).delete()
+        return Response()
+
+
 class ProductsListView(ListAPIView):
 
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
 
+    @swagger_auto_schema(manual_parameters=[CAR_TYPE_QUERY, CATEGORY_QUERY])
     def get(self, request, pk):
         query = {}
         if request.query_params.get('category'):
             query['category'] = request.query_params['category']
         if request.query_params.get('car_type'):
             query['car_type'] = request.query_params['car_type']
+        if request.query_params.getlist('year'):
+            query['year__in'] = request.query_params.getlist('year')
+        if request.query_params.get('price_gte'):
+            query['price__gte'] = request.query_params['price_gte']
+        if request.query_params.get('price_lte'):
+            query['price__lte'] = request.query_params['price_lte']
         queryset = self.get_queryset().filter(car_category=pk, **query)
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
@@ -48,37 +84,39 @@ class ProductFilterOptions(GenericAPIView):
         queryset = self.get_queryset().filter(car_category=pk)
         serializer = self.serializer_class(queryset, many=True)
         options = {
-            "brands": queryset.distinct("brand"),
-            "max_year": queryset.order_by("year").distinct("brand")[0],
-            "max_price": queryset.order_by("price").distinct("price")[0],
-            "min_price": queryset.order_by("-price").distinct("price")[0],
-            "min_year": queryset.order_by("-year").distinct("brand")[0],
-            "car_type": queryset.distinct("car_type")
+            "brands": queryset.distinct("brand_id").values_list('brand', flat=True),
+            "max_year": queryset.order_by("year").distinct('year').values_list('year', flat=True),
+            "max_price": queryset.order_by("price").first().price,
+            "min_price": queryset.order_by("-price").first().price,
+            "car_type": queryset.distinct("car_type_id").values_list('car_type', flat=True)
         }
-        return Response(serializer.data)
+        print(options)
+        return Response(options)
 
 
 class AdminProductCreateView(GenericAPIView):
 
     serializer_class = ProductSerializer
     queryset = Products.objects.all()
+    permissions = [IsAdminUser,]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(brand_id=request.user.company.id)
         return Response(serializer.data)
     
     def get(self, request):
         company = request.user.company
         queryset = self.queryset.filter(brand_id=company.id)
         serializer = self.serializer_class(queryset, many=True)
-        return Response(serializers.data)
+        return Response(serializer.data)
 
 class AdminProductView(GenericAPIView):
 
     serializer_class = ProductSerializer
     queryset = Products.objects.all()
+    permissions = [IsAdminUser,]
 
     def get(self,request, pk):
         queryset = self.queryset.get(pk=pk)
@@ -96,3 +134,17 @@ class AdminProductView(GenericAPIView):
         instance = get_object_or_404(self.queryset, pk=pk)
         instance.delete()
         return Response()
+
+
+class CarCategorySuperAdminView(GenericAPIView):
+
+    serializer_class = CarCategoryAdminSerializer
+    queryset = CarCategory.objects.all()
+    permissions = [IsAdminUser, ]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+

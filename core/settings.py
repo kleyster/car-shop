@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     #### PROJECT APPS
     "products",
     "cart",
-    "_auth"
+    "_auth",
+    "orders"
 ]
 
 MIDDLEWARE = [

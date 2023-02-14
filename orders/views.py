@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from products.models import Products
 from rest_framework.permissions import AllowAny, IsAdminUser
 from _auth.models import Company
+from core.utils import send_appilcation_mail
 
 
 class ApplicationFormView(GenericAPIView):
@@ -16,7 +17,8 @@ class ApplicationFormView(GenericAPIView):
         instance = get_object_or_404(Products.objects.select_related('brand').all(), pk=pk)
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(product_id=instance.id, company_id=instance.brand_id)
+        application = serializer.save(product_id=instance.id, company_id=instance.brand_id)
+        send_appilcation_mail(application, instance.brand.created_by.email)
         return Response(serializer.data)
 
 

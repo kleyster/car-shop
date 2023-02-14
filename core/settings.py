@@ -163,19 +163,25 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = "_auth.Users"
 
 REDIS_HOST = os.getenv("REDIS_HOST")
-REDIS_PORT = os.getenv("REDIS_PORT")
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
 
-#CACHES = {
-#    "default": {
-#        "BACKEND": "django_redis.cache.RedisCache",
-#        "LOCATION": f"{REDIS_HOST}:{REDIS_PORT}/",
-#        "OPTIONS": {
-#            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#            "PASSWORD": REDIS_PASSWORD
-#        }
-#    }
-#}
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{REDIS_HOST}:6379/",
+        #        "OPTIONS": {
+        #    "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        #    "PASSWORD": REDIS_PASSWORD
+        #}
+    }
+}
 
-CACHE_TTL = os.getenv("CACHE_TTL")
+CACHE_TTL = os.getenv("CACHE_TTL", 120)
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", True)
+EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD","lmrreroeyzptpyhi")
 

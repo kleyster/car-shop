@@ -2,42 +2,36 @@ from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from .models import Users, Company
 from .serializers import EmailValidator, UserSerializer, CompanySerializer
-from.utils import generate_random_int
+from .utils import send_verification_to_email, check_verification_code
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from django.core import cache
-from core.settings import CACHE_TTL
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
 
 
-class AuthenticationView(APIView):
+class AuthenticationView(GenericAPIView):
+
+    serializer_class = EmailValidator
 
     def post(self, request):
         serializer = EmailValidator(data=request.data)
         serializer.is_valid(raise_exception=True)
-        instance = Users.objects.get_or_create(email=serializer.email)
+        instance, created = Users.objects.get_or_create(email=serializer.validated_data['email'])
         instance.save()
-        cache.set(instance.email, str(generate_random_int()), timeout=int(CACHE_TTL))
+        send_verification_to_email(instance.email)
         return Response(status=status.HTTP_201_CREATED)
 
 
-class AuthenticationVerificationView(APIView):
+class AuthenticationVerificationView(GenericAPIView):
+
+    serializer_class = EmailValidator
 
     def post(self, request):
 
         serializer = EmailValidator(data=request.data)
         serializer.is_valid(raise_exception=True)
-        instance = get_object_or_404(Users, email=serializer.email)
-        request_code = request.data.get('security_code')
-        if str(request_code) != str(cache.get(instance.email)):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        cache.delete(instance.email)
-        token = RefreshToken.for_user(instance)
-        return Response({
-                "refresh": str(token),
-                "access": str(token.access_token)
-            })
+        instance = get_object_or_404(Users, email=serializer.validated_data['email'])
+        request_code = request.data.get('request_code')
+        return check_verification_code(instance, request_code)
 
 
 class UserView(GenericAPIView):
@@ -46,7 +40,7 @@ class UserView(GenericAPIView):
 
     def get(self, request):
         return Response(
-            UserSerializer(request.user)
+            UserSerializer(request.user).data
         )
 
     def post(self, request):

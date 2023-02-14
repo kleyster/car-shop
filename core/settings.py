@@ -91,7 +91,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.getenv('POSTGRES_DB', "shop_dulat"),
-        'HOST': "app-db",
+        'HOST': os.getenv("POSTGRES_HOST", "127.0.0.1"),
         'PORT': "5432",
         'USER': os.getenv('POSTGRES_USER', "commonuser"),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', "ASDZXC123"),

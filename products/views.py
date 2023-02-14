@@ -21,7 +21,7 @@ class ProductsImagesView(GenericAPIView):
     permissions = [IsAdminUser,]
     
     def get(self, request, pk):
-        images = queryset.filter(product_id=pk)
+        images = self.queryset.filter(product_id=pk)
         serializer = self.serializer_class(images, many=True)
         return Response(serializer.data)
 
@@ -36,7 +36,7 @@ class ProductImageView(GenericAPIView):
     permissions = [IsAdminUser, ]
 
     def delete(self, request, pk):
-        Product.images.filter(pk=pk).delete()
+        Products.images.filter(pk=pk).delete()
         return Response()
 
 
@@ -111,6 +111,7 @@ class AdminProductCreateView(GenericAPIView):
         queryset = self.queryset.filter(brand_id=company.id)
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
+
 
 class AdminProductView(GenericAPIView):
 

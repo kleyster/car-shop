@@ -10,3 +10,4 @@ class ProductApplications(models.Model):
     city = models.CharField(max_length=50)
     product = models.ForeignKey("products.Products", related_name="applications", on_delete=models.PROTECT)
     company = models.ForeignKey("_auth.Company", related_name="applications", on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)

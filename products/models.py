@@ -8,6 +8,8 @@ class CarCategory(models.Model):
     name_cn = models.CharField(max_length=150, default="")
     image = models.ImageField()
 
+    def __str__(self):
+        return self.name
 
 class CarType(models.Model):
     name = models.CharField(max_length=100)
@@ -15,12 +17,18 @@ class CarType(models.Model):
     car_category = models.ForeignKey(CarCategory, related_name="car_types", on_delete=models.CASCADE)
     image = models.ImageField()
 
+    def __str__(self):
+        return self.name
+
 
 class Category(models.Model):
 
     name = models.CharField(max_length=150)
     name_cn = models.CharField(max_length=150, default="")
     car_type = models.ManyToManyField(CarCategory, related_name="categories")
+
+    def __str__(self):
+        return self.name
 
 
 class Products(models.Model):
@@ -35,6 +43,9 @@ class Products(models.Model):
     can_order = models.BooleanField(default=False)
     product_code = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
         self.car_category = self.car_type.car_category
         super(Products, self).save(*args, **kwargs)
@@ -44,3 +55,6 @@ class ProductImages(models.Model):
 
     image = models.ImageField()
     product = models.ForeignKey(Products, related_name="images", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.product.name

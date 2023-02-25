@@ -5,13 +5,13 @@ from _auth.models import Company
 
 class CarCategory(models.Model):
     name = models.CharField(max_length=100)
-    name_cn = models.CharField(max_length=150, default=CarCategory.name)
+    name_cn = models.CharField(max_length=150, default="")
     image = models.ImageField()
 
 
 class CarType(models.Model):
     name = models.CharField(max_length=100)
-    name_cn = models.CharField(max_length=150, default=CarType.name)
+    name_cn = models.CharField(max_length=150, default="")
     car_category = models.ForeignKey(CarCategory, related_name="car_types", on_delete=models.CASCADE)
     image = models.ImageField()
 
@@ -19,7 +19,7 @@ class CarType(models.Model):
 class Category(models.Model):
 
     name = models.CharField(max_length=150)
-    name_cn = models.CharField(max_length=150, default=Category.name)
+    name_cn = models.CharField(max_length=150, default="")
     car_type = models.ManyToManyField(CarCategory, related_name="categories")
 
 

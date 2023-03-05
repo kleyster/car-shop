@@ -8,6 +8,7 @@ urlpatterns = [
     path("admin/products/", AdminProductCreateView.as_view()),
     path("admin/products/<int:pk>/images", ProductsImagesView.as_view()),
     path("admin/products/image/<int:pk>", ProductImageView.as_view()),
+    path("products/search", ProductSearchView.as_view()),
     path("products/<int:pk>", ProductsListView.as_view()),
     path("product/<int:pk>", ProductRetrieveView.as_view()),
     path("admin/product/<int:pk>", AdminProductView.as_view()),

@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from drf_yasg.utils import swagger_auto_schema
 from products.swagger_utils import CAR_TYPE_QUERY, CATEGORY_QUERY
 from _auth.models import Company
+from django.db.models import Q
 
 
 class CarCategoryView(ListAPIView):
@@ -49,6 +50,8 @@ class ProductsListView(ListAPIView):
     @swagger_auto_schema(manual_parameters=[CAR_TYPE_QUERY, CATEGORY_QUERY])
     def get(self, request, pk):
         query = {}
+        if request.query_params.get('search'):
+            query['name__icontains'] = request.query_params['search']
         if request.query_params.get('category'):
             query['category__in'] = request.query_params.getlist('category')
         if request.query_params.get('car_type'):
@@ -151,7 +154,7 @@ class CarCategorySuperAdminView(GenericAPIView):
         return Response(serializer.data)
 
 
-class ProductSearch(GenericAPIView):
+class ProductSearchView(GenericAPIView):
 
     serializer_class = NameSerializer
     queryset = Products.objects.all()
@@ -160,5 +163,6 @@ class ProductSearch(GenericAPIView):
         search_text = request.query_params.get('search')
         if search_text is None:
             return Response(status=404)
+        queryset = self.queryset.filter(Q(name__icontains=search_text) | Q(name_cn__icontains=search_text))
         serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data)

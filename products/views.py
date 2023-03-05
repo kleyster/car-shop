@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from drf_yasg.utils import swagger_auto_schema
-from products.swagger_utils import CAR_TYPE_QUERY, CATEGORY_QUERY
+from products.swagger_utils import CAR_TYPE_QUERY, CATEGORY_QUERY, PRODUCT_SEARCH
 from _auth.models import Company
 from django.db.models import Q
 
@@ -159,6 +159,7 @@ class ProductSearchView(GenericAPIView):
     serializer_class = NameSerializer
     queryset = Products.objects.all()
 
+    @swagger_auto_schema(manual_parameters=[PRODUCT_SEARCH])
     def get(self, request):
         search_text = request.query_params.get('search')
         if search_text is None:

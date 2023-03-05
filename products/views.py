@@ -164,6 +164,6 @@ class ProductSearchView(GenericAPIView):
         search_text = request.query_params.get('search')
         if search_text is None:
             return Response(status=404)
-        queryset = self.queryset.filter(name__icontains=search_text)
+        queryset = self.get_queryset().filter(name__icontains=search_text)
         serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data)

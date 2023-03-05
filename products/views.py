@@ -150,3 +150,15 @@ class CarCategorySuperAdminView(GenericAPIView):
         serializer.save()
         return Response(serializer.data)
 
+
+class ProductSearch(GenericAPIView):
+
+    serializer_class = NameSerializer
+    queryset = Products.objects.all()
+
+    def get(self, request):
+        search_text = request.query_params.get('search')
+        if search_text is None:
+            return Response(status=404)
+        serializer = self.serializer_class(self.queryset, many=True)
+        return Response(serializer.data)

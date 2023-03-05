@@ -47,7 +47,7 @@ class ProductsListView(ListAPIView):
     queryset = Products.objects.all()
     serializer_class = ProductSerializer
 
-    @swagger_auto_schema(manual_parameters=[CAR_TYPE_QUERY, CATEGORY_QUERY])
+    @swagger_auto_schema(manual_parameters=[CAR_TYPE_QUERY, CATEGORY_QUERY, PRODUCT_SEARCH])
     def get(self, request, pk):
         query = {}
         if request.query_params.get('search'):
@@ -164,6 +164,6 @@ class ProductSearchView(GenericAPIView):
         search_text = request.query_params.get('search')
         if search_text is None:
             return Response(status=404)
-        queryset = self.queryset.filter(Q(name__icontains=search_text) | Q(name_cn__icontains=search_text))
+        queryset = self.queryset.filter(name__icontains=search_text)
         serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data)

@@ -34,7 +34,7 @@ class CarCategorySerializer(NameSerializer):
 class ProductSerializer(serializers.ModelSerializer):
 
     images = ProductImageSerializer(many=True, read_only=True)
-    images = serializers.ListField(write_only=True, child=serializers.ImageField())
+    #images = serializers.ListField(write_only=True, child=serializers.ImageField())
     brand = serializers.IntegerField(read_only=True, source="brand.id")
 
     class Meta:

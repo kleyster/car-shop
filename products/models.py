@@ -38,10 +38,15 @@ class Products(models.Model):
     brand = models.ForeignKey(Company, related_name='products', on_delete=models.CASCADE)
     year = models.SmallIntegerField()
     price = models.IntegerField()
+    model = models.CharField(max_length=100)
+    car_brand = models.CharField(max_length=100)
+    condition = models.CharField(max_length=100)
+    engine = models.CharField(max_length=100)
     characteristics = ArrayField(models.JSONField())
     category = models.ForeignKey(Category, related_name="products", on_delete=models.SET_NULL, null=True)
     can_order = models.BooleanField(default=False)
     product_code = models.CharField(max_length=20)
+    description = models.TextField()
 
     def __str__(self):
         return self.name
@@ -58,3 +63,4 @@ class ProductImages(models.Model):
 
     def __str__(self):
         return self.product.name
+

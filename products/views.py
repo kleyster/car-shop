@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from drf_yasg.utils import swagger_auto_schema
 from products.swagger_utils import CAR_TYPE_QUERY, CATEGORY_QUERY
+from _auth.models import Company
 
 
 class CarCategoryView(ListAPIView):
@@ -49,9 +50,9 @@ class ProductsListView(ListAPIView):
     def get(self, request, pk):
         query = {}
         if request.query_params.get('category'):
-            query['category'] = request.query_params['category']
+            query['category__in'] = request.query_params.getlist('category')
         if request.query_params.get('car_type'):
-            query['car_type'] = request.query_params['car_type']
+            query['car_type__in'] = request.query_params.getlist('car_type')
         if request.query_params.getlist('year'):
             query['year__in'] = request.query_params.getlist('year')
         if request.query_params.get('price_gte'):
@@ -82,15 +83,15 @@ class ProductFilterOptions(GenericAPIView):
 
     def get(self, request, pk):
         queryset = self.get_queryset().filter(car_category=pk)
-        serializer = self.serializer_class(queryset, many=True)
+        car_type = CarType.objects.filter(id__in=queryset.distinct("car_type_id").values_list("car_type_id", flat=True))
+        brands = Company.objects.filter(id__in=queryset.distinct("brand_id").values_list('brand', flat=True))
         options = {
-            "brands": queryset.distinct("brand_id").values_list('brand', flat=True),
+            "brands": self.serializer_class(brands, many=True).data,
             "max_year": queryset.order_by("year").distinct('year').values_list('year', flat=True),
-            "max_price": queryset.order_by("price").first().price,
-            "min_price": queryset.order_by("-price").first().price,
-            "car_type": queryset.distinct("car_type_id").values_list('car_type', flat=True)
+            "max_price": queryset.order_by("price").first().price if queryset.exists() else None,
+            "min_price": queryset.order_by("-price").first().price if queryset.exists() else None,
+            "car_type": self.serializer_class(car_type, many=True).data
         }
-        print(options)
         return Response(options)
 
 

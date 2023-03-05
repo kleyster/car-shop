@@ -11,7 +11,7 @@ class NameSerializer(serializers.Serializer):
 
     id = serializers.IntegerField()
     name = serializers.CharField()
-    name_cn = serializers.CharField()
+    name_cn = serializers.CharField(required=False)
 
 
 class CarTypesSerializer(NameSerializer):

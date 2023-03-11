@@ -30,8 +30,8 @@ class ProductsImagesView(GenericAPIView):
     def post (self, request, pk):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        image = ProductImages.objects.create(**serializer.validated_data)
-        return Response(self.serializer_class(image))
+        image = ProductImages.objects.create(**serializer.validated_data, product_id=pk)
+        return Response(self.serializer_class(image).data)
 
 
 class ProductImageView(GenericAPIView):
@@ -73,8 +73,8 @@ class ProductRetrieveView(GenericAPIView):
     serializer_class = ProductSerializer
 
     def get(self, request, pk):
-        queryset = self.get_queryset().get(id=pk)
-        serializer = self.serializer_class(queryset)
+        instance = get_object_or_404(self.get_queryset(), pk=pk)
+        serializer = self.serializer_class(instance)
         return Response(serializer.data
                         )
 

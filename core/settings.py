@@ -63,6 +63,37 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+"""
+STORING MIGRATIONS IN ONE FOLDER TO MAKE BACKUP OF MIGRATION AND DO MIGRATION IN ANOTHER DEPLOY STAGE
+PROJECT_APPS = [
+    "category",
+    "product"
+]
+
+DJANGO_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    "migrations"
+]
+
+INSTALLED_APPS = PROJECT_APPS + DJANGO_APPS
+
+
+def create_migrations_module(app):
+    if not os.path.exists("migrations/%s/__init__.py" % app):
+        os.makedirs("migrations/%s" % app)
+        with open("migrations/%s/__init__.py" % app, "w+"):
+            pass
+    return "migrations.%s" % app
+
+
+MIGRATION_MODULES = {app: create_migrations_module(app) for app in PROJECT_APPS}
+"""
+
 ROOT_URLCONF = 'core.urls'
 CORS_ALLOW_ALL_ORIGINS = True
 
